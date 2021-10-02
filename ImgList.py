@@ -6,7 +6,7 @@ from PIL import Image
 
 class ImgList():
     def __init__(self):
-        self.path = "imgs"
+        self.path = "../../googleDrive/01_project/ECHO/automateMakingMovie/imgs"
 
     def getImgList(self):
         fileNameListNoProcess = glob.glob("./" + self.path + "/*")
@@ -38,6 +38,6 @@ class ImgList():
         resizedHeight = int(baseWidth/width * height)
         img = cv2.resize(img, (baseWidth, resizedHeight))
         # 画像に移ってる物体の名前を取得
-        idx = fileName.find("_")
+        idx = fileName.rfind("_")
         materialName = fileName[idx + 1:-4]
         return img, materialName

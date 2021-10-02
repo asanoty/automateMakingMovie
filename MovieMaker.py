@@ -2,6 +2,7 @@ from ImgList import ImgList
 import cv2
 import numpy as np
 import pykakasi
+import random
 
 
 class MovieMaker():
@@ -31,16 +32,10 @@ class MovieMaker():
             # 背景に画像と文字をつける
             materialImg, materialName = imgList.getImg(num=num)
             print(materialName)
-            imgCenterY = int(self.H / 2)
-            imgCenterX = int(self.W / 2)
-            materialWHalf = int(materialImg.shape[1] / 2)
-            materialHHalf = int(materialImg.shape[0] / 2)
-            img[imgCenterY - materialHHalf:imgCenterY - materialHHalf +
-                materialImg.shape[0], imgCenterX - materialWHalf:imgCenterX -
-                materialWHalf + materialImg.shape[1]] = materialImg  # 画像
-            imgWithText = self.__drawText(img=img, texts=materialName)
+            imt = self.__appendImg(img, materialImg)
+            img = self.__drawText(img=img, texts=materialName)
             # 画像を動画に反映
-            self.video.write(imgWithText)
+            self.video.write(img)
 
         # 動画の出力
         self.video.release()
@@ -88,3 +83,13 @@ class MovieMaker():
         draw_texts(mat_img, texts)
 
         return mat_img
+
+    def __appendImg(self, img, materialImg):
+        materialWHalf = int(materialImg.shape[1] / 2)
+        materialHHalf = int(materialImg.shape[0] / 2)
+        boudaryY = self.H / 2 - materialWHalf
+        boundayX = self.W / 2 - materialWHalf
+        imgCenterY = int(self.H / 2 + random.randrange(-boudaryY, boudaryY))
+        imgCenterX = int(self.W / 2 + random.randrange(-boundayX, boundayX))
+        img[imgCenterY - materialHHalf:imgCenterY - materialHHalf +materialImg.shape[0], imgCenterX - materialWHalf:imgCenterX - materialWHalf + materialImg.shape[1]] = materialImg  # 画像
+        return img
