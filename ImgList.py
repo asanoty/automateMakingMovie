@@ -87,26 +87,11 @@ class ImgList():
         pllowImg = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
         # かさね合わせ
-        imgLeftX = int(random.randrange(0, self.width - pllowMaterialImaga.size[1]))
-        imgTopY = int(random.randrange(0, self.height - pllowMaterialImaga.size[0]))
+        imgLeftX = int(random.randrange(0, self.width - pllowMaterialImaga.size[0]))
+        imgTopY = int(random.randrange(0, self.height - pllowMaterialImaga.size[1]))
         pllowImg.paste(pllowMaterialImaga, (imgLeftX, imgTopY))
 
         # pillow->cv2
         pllowImgPre = np.array(pllowImg, dtype=np.uint8)
         img = cv2.cvtColor(pllowImgPre, cv2.COLOR_RGB2BGR)
-
-        # # 素材の大きさ
-        # materialW = materialImg.shape[0]
-        # materialH = materialImg.shape[1]
-        # # 素材のおかれる範囲
-        # randomX = random.randrange(0, self.width - materialW)
-        # randomY = random.randrange(0, self.height - materialH)
-        # imgLeftX = int(randomX)
-        # imgTopY = int(randomY)
-        # imgRightX = imgLeftX + materialW
-        # imgBottomY = imgTopY + materialH
-        # # かさね合わせ
-        # print(imgLeftX, imgRightX)
-        # print(img.shape, materialImg.shape)
-        # img[imgLeftX:imgLeftX+materialW, imgTopY:imgBottomY, :] = materialImg
         return img

@@ -34,9 +34,10 @@ class ShiritoriElementsList():
         height = img.shape[0]
         width = img.shape[1]
         # 画像のサイズの調整
-        baseWidth = 200
-        resizedHeight = int(baseWidth/width * height)
-        img = cv2.resize(img, (baseWidth, resizedHeight))
+        if width > 200:
+            baseWidth = 200
+            resizedHeight = int(baseWidth / width * height)
+            img = cv2.resize(img, (baseWidth, resizedHeight))
         # 画像に移ってる物体の名前を取得
         idx = fileName.rfind("_")
         materialName = fileName[idx + 1:-4]
