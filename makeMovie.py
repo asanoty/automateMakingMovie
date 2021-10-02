@@ -1,13 +1,12 @@
-from MovieMaker import MovieMaker
+from Movie import Movie
 
 
 def main():
     # オブジェクトの設定
-    movieMaker = MovieMaker()
+    movie = Movie()
 
     # 動画の生成
-    movieMaker.makeMovie()
-
+    movie.makeMovie()
 
 if __name__ == "__main__":
     main()
