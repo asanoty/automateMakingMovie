@@ -8,44 +8,49 @@ import random
 class MovieMaker():
     def __init__(self):
         # 動画の設定
-        self.W = 640
-        self.H = 480
-        CLIP_FPS = 1  # 1秒間に20枚のフレーム
-        filePath = "movie.mp4"
-        codec = cv2.VideoWriter_fourcc(*'mp4v')
-        # 動画のオブジェクト
-        self.video = cv2.VideoWriter(filePath, codec, CLIP_FPS,
-                                     (self.W, self.H))
+        backgroundImgPath = "background.jpg"
+        self.backgroundImg = cv2.imread(backgroundImgPath)
+        self.videoW = self.backgroundImg.shape[1]
+        self.videoH = self.backgroundImg.shape[0]
 
     def makeMovie(self):
+        # 動画の設定
+        outputFilePath = "movie.mp4"
+        CLIP_FPS = 1  # 1秒間に20枚のフレーム
+        codec = cv2.VideoWriter_fourcc(*'mp4v')
+
         # オブジェクトの生成
-        imgList = ImgList()
+        video = cv2.VideoWriter(outputFilePath, codec, CLIP_FPS,
+                                (self.videoW, self.videoH))  # 動画
+        imgList = ImgList()  # 画像のリスト
 
         # 画像リストの生成
         imgList.getImgList()
 
+        # 動画の背景の生成
+        img = self.backgroundImg
+
         # 動画の作成
-        imgNum = imgList.getImgNum()
-        for num in range(imgNum):
-            # 動画に反映する画像の生成
-            img = self.__getBackGroundImg()
-            # 背景に画像と文字をつける
-            materialImg, materialName = imgList.getImg(num=num)
-            print(materialName)
-            imt = self.__appendImg(img, materialImg)
-            img = self.__drawText(img=img, texts=materialName)
-            # 画像を動画に反映
-            self.video.write(img)
+        imgMaterialNum = imgList.getImgNum()
+        for frameNum in range(imgMaterialNum):
+            # 素材となる画像とその名前を取得
+            if frameNum >= 1:
+                imgMaterialNum = frameNum - 1
+                materialImg, materialName = imgList.getImg(imgMaterialNum)
+                print(materialName)
+                # 画像に素材をのせる
+                img = self.__appendImg(img, materialImg)
+                # 画像に文字を載せる
+                imgWithText = img
+                imgWithText = self.__drawText(img=img, texts=materialName)
+                # 画像を動画に反映
+                video.write(imgWithText)
+            else:
+                # 画像を動画に反映
+                video.write(img)
 
         # 動画の出力
-        self.video.release()
-
-    def __getBackGroundImg(self):
-        BG_COLOR = (79, 62, 70)
-        img = np.zeros((self.H, self.W, 3), np.uint8)
-        img = cv2.rectangle(img, (0, 0), (self.W - 1, self.H - 1), BG_COLOR,
-                            -1)
-        return img
+        video.release()
 
     def __drawText(self, img, texts, w_ratio=0.35, h_ratio=0.15, alpha=0.4):
         def draw_texts(img, texts, font_scale=0.7, thickness=2):
@@ -87,9 +92,13 @@ class MovieMaker():
     def __appendImg(self, img, materialImg):
         materialWHalf = int(materialImg.shape[1] / 2)
         materialHHalf = int(materialImg.shape[0] / 2)
-        boudaryY = self.H / 2 - materialWHalf
-        boundayX = self.W / 2 - materialWHalf
-        imgCenterY = int(self.H / 2 + random.randrange(-boudaryY, boudaryY))
-        imgCenterX = int(self.W / 2 + random.randrange(-boundayX, boundayX))
-        img[imgCenterY - materialHHalf:imgCenterY - materialHHalf +materialImg.shape[0], imgCenterX - materialWHalf:imgCenterX - materialWHalf + materialImg.shape[1]] = materialImg  # 画像
+        boudaryY = self.videoH / 2 - materialWHalf
+        boundayX = self.videoW / 2 - materialWHalf
+        imgCenterY = int(self.videoH / 2 +
+                         random.randrange(-boudaryY, boudaryY))
+        imgCenterX = int(self.videoW / 2 +
+                         random.randrange(-boundayX, boundayX))
+        img[imgCenterY - materialHHalf:imgCenterY - materialHHalf +
+            materialImg.shape[0], imgCenterX - materialWHalf:imgCenterX -
+            materialWHalf + materialImg.shape[1]] = materialImg  # 画像
         return img

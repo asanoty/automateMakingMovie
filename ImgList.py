@@ -38,6 +38,6 @@ class ImgList():
         resizedHeight = int(baseWidth/width * height)
         img = cv2.resize(img, (baseWidth, resizedHeight))
         # 画像に移ってる物体の名前を取得
-        idx = fileName.rfind("_")
+        idx = fileName.rgitfind("_")
         materialName = fileName[idx + 1:-4]
         return img, materialName
